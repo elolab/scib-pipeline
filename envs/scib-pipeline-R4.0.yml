@@ -6,7 +6,7 @@ dependencies:
   - python>=3.7
   - r-base=4.0
   - rpy2
-  - pip
+  - pip=21.2.4
   - snakemake>=5
   - networkx
   - icu
@@ -32,8 +32,8 @@ dependencies:
   - r-seuratobject
   - r-spatstat=1.64
   - pip:
-#    - scib==1.0.4
-    - git+https://github.com/theislab/scib.git
+    - scib==1.0.4
+#    - git+https://github.com/theislab/scib.git
     - igraph<0.10
     - trvaep==0.1.0
 #    - git+https://github.com/pinin4fjords/mnnpy.git

@@ -18,3 +18,10 @@ Benchmarking_data_integration.Rproj
 .idea/
 
 *.Rproj
+
+src/
+
+benchmark_results
+
+rsessions
+!data/create_ifnb_dataset.R

@@ -1,6 +1,9 @@
 loadSeuratObject = function(filename) {
 	require(Seurat)
 	sobj = readRDS(filename)
+	if (('originalexp' %in% Assays(sobj)) & !('RNA' %in% Assays(sobj))) {
+		sobj <- RenameAssays(sobj, originalexp = 'RNA')
+	}
 	return(sobj)
 }
 
@@ -35,7 +38,7 @@ runSeurat = function(data, batch, hvg=2000) {
         	   sd.weight = 1,
         	   sample.tree = NULL,
         	   preserve.order = F,
-        	   do.cpp = T,
+#        	   do.cpp = T,
         	   eps = 0,
         	   verbose = T)
 	  return(integrated)
@@ -75,7 +78,7 @@ runSeuratRPCA = function(data, batch, hvg=2000) {
         	   sd.weight = 1,
         	   sample.tree = NULL,
         	   preserve.order = F,
-        	   do.cpp = T,
+#        	   do.cpp = T,
         	   eps = 0,
         	   verbose = T)
 	  return(integrated)
@@ -215,8 +218,50 @@ runFastMNN = function(sobj, batch) {
     sobj@reductions['X_emb'] <- CreateDimReducObject(reducedDim(sce, "corrected"), key = 'fastmnn_')
   } else {
     # Seurat v3
-    sobj@assays$RNA <- CreateAssayObject(corrected_data)
+    sobj@assays$RNA <- CreateAssayObject(as.matrix(corrected_data))
+    sobj@assays$RNA@key <- "rna_"
     sobj[['X_emb']] <- CreateDimReducObject(reducedDim(sce, "corrected"), key = 'fastmnn_')
+  }
+
+  return(sobj)
+}
+
+runCoralysis = function(sobj, batch, scaling, threads = 4) {
+  suppressPackageStartupMessages({
+    require(SingleCellExperiment)
+    require(Coralysis)
+  })
+
+  if (is.null(sobj@assays$RNA)) {
+    # Seurat v4
+    expr <- GetAssayData(sobj, slot = "data")
+  } else {
+    # Seurat v3
+    expr <- sobj@assays$RNA@data
+  }
+  # Scaling
+  if (scaling == "scaled") {
+	  scaling <- "feature"
+  } else {
+	  scaling <- NULL
+  }
+  
+  # Data
+  meta.data <- data.frame(sobj@meta.data[[batch]])
+  colnames(meta.data) <- batch
+  sce <- SingleCellExperiment(assays = list("logcounts" = as(as.matrix(expr), "sparseMatrix")), 
+			      colData = DataFrame(meta.data))
+  # Run Coralysis integration
+  set.seed(1024)
+  sce <- RunParallelDivisiveICP(object = sce, batch.label = batch, scale.by = scaling, threads = threads)
+  sce <- RunPCA(object = sce, assay.name = "joint.probability", dimred.name = "PCA")
+
+  if (is.null(sobj@assays$RNA)) {
+    # Seurat v4
+    sobj@reductions['X_emb'] <- CreateDimReducObject(reducedDim(sce, "PCA"), key = 'coralysis_')
+  } else {
+    # Seurat v3
+    sobj[['X_emb']] <- CreateDimReducObject(reducedDim(sce, "PCA"), key = 'coralysis_')
   }
 
   return(sobj)

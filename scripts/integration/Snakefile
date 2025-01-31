@@ -44,6 +44,7 @@ rule integration_run_r:
         output: {output[0]}
         Run {wildcards.method} on {wildcards.scaling} data
         feature selection: {wildcards.hvg}
+        scaling: {wildcards.scaling}
         dataset: {wildcards.scenario}
         command: {params.cmd}
         hvgs: {params.hvgs}
@@ -58,7 +59,9 @@ rule integration_run_r:
         """
         {params.cmd} scripts/integration/runMethods.R -i {input.adata} \
             -o {output} -b {params.batch_key} \
-            --method {wildcards.method} {params.hvgs}
+            --method {wildcards.method} \
+	    --scaling {wildcards.scaling} \
+	    {params.hvgs} 
         """
 
 

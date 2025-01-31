@@ -12,19 +12,23 @@ setwd(getScriptPath())
 
 library('optparse')
 library(rlang)
-require(Seurat)
 
 option_list <- list(make_option(c("-m", "--method"), type="character", default=NA, help="integration method to use"),
 		    make_option(c("-i", "--input"), type="character", default=NA, help="input data"),
 		    make_option(c("-o", "--output"), type="character", default=NA, help="output file"),
 		    make_option(c("-b", "--batch"), type="character", default=NA, help="batch variable"),
-		    make_option(c("-v", "--hvg"), type="character", default=NA, help="hvg list for seurat"))
-
-
+		    make_option(c("-s", "--scaling"), type="character", default=NA, help="scaling string for Coralysis"),
+		    make_option(c("-v", "--hvg"), type="character", default=NA, help="hvg list for seurat")) 
 
 opt = parse_args(OptionParser(option_list=option_list))
 
 source('integration.R')
+
+if ((opt$s=="scaled") & (opt$method=="coralysis")) {
+  new.input <- gsub(pattern = "scaled", replacement = "unscaled", x = opt$i)
+  message("Importing unscaled R object for Coralysis to scale it internally!\nReplacing: ", opt$i, "\nby: ", new.input, "\n")
+  opt$i <- new.input
+} 
 sobj = loadSeuratObject(opt$i)
 
 if(opt$method=='seurat'){
@@ -85,6 +89,15 @@ if(opt$method=='fastmnn'){
 	}
 
 	out=runFastMNN(sobj, opt$b)
+}
+
+if(opt$method=='coralysis'){
+	if(!is.na(opt$hvg)) {
+		hvg<-unlist(readRDS(opt$hvg), use.names=FALSE)
+		sobj <- subset(sobj, features=hvg)
+	}
+
+	out=runCoralysis(sobj, opt$b, opt$s)
 }
 
 saveSeuratObject(out, opt$o)
