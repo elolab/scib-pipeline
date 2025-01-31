@@ -25,3 +25,4 @@ benchmark_results
 
 rsessions
 !data/create_ifnb_dataset.R
+.scib-pipeline-dev
