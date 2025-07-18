@@ -40,6 +40,6 @@ adata <- AnnData(
 )
 
 # Export anndata object as h5ad 
-adata$write <- h5ad(filename = "datasets/ifnb.h5ad")
+adata$write_h5ad(filename = "datasets/ifnb.h5ad")
 #
 #------------------------------------------------------------------------------#
