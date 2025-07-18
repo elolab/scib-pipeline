@@ -21,14 +21,14 @@ sce.ifnb <- as.SingleCellExperiment(ifnb)
 sce.ifnb <- Coralysis::PrepareData(sce.ifnb)
 
 # Remove cells from one of the batches
-pick.cells <- ((sce.ifnb$stim=="CTRL" & !(sce.ifnb$seurat <- annotations %in% c("CD14 Mono", "CD4 Naive T"))) | 
-	                        (sce.ifnb$stim=="STIM" & !(sce.ifnb$seurat <- annotations %in% c("CD16 Mono", "CD4 Memory T"))))
+pick.cells <- ((sce.ifnb$stim=="CTRL" & !(sce.ifnb$seurat_annotations %in% c("CD14 Mono", "CD4 Naive T"))) | 
+	                        (sce.ifnb$stim=="STIM" & !(sce.ifnb$seurat_annotations %in% c("CD16 Mono", "CD4 Memory T"))))
 sce.ifnb <- sce.ifnb[,pick.cells]
 
 # Format data for anndata 
 counts(sce.ifnb) <- as(as(counts(sce.ifnb), "RsparseMatrix"), "dgRMatrix")
 logcounts(sce.ifnb) <- as(as(logcounts(sce.ifnb), "RsparseMatrix"), "dgRMatrix")
-sce.ifnb$seurat <- annotations <- as.character(sce.ifnb$seurat <- annotations)
+sce.ifnb$seurat_annotations <- as.character(sce.ifnb$seurat_annotations)
 sce.ifnb$ident <- as.character(sce.ifnb$ident)
 sce.ifnb$orig.ident <- as.character(sce.ifnb$orig.ident)
 
