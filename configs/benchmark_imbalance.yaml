@@ -1,0 +1,104 @@
+ROOT: benchmark_imbalance 
+r_env : scib-R4.1
+py_env : scib-pipeline-R4.1
+
+unintegrated_metrics: true
+
+FEATURE_SELECTION:
+  hvg: 2000
+  full_feature: 0
+
+SCALING:
+  - unscaled
+  - scaled
+
+METHODS:
+# python methods
+  scanorama:
+    output_type:
+      - embed
+      - full
+  scvi:
+    no_scale: true
+    output_type: embed
+# R methods
+  seurat:
+    R: true
+    output_type: full
+  seuratrpca:
+      R: true
+      output_type: full
+  fastmnn:
+    R: true
+    output_type:
+      - embed
+      - full
+  harmony:
+    R: true
+    output_type: embed
+  coralysis:
+    R: true
+    output_type: embed
+
+DATA_SCENARIOS:
+  balanced_pbmc:
+    batch_key: batch
+    label_key: celltype
+    organism: human
+    assay: expression
+    file: data/datasets/balanced_pbmc.h5ad
+  imbalanced_pbmc_B_cell_0_perc:
+    batch_key: batch
+    label_key: celltype
+    organism: human
+    assay: expression
+    file: data/datasets/imbalanced_pbmc_B_cell_0.h5ad
+  imbalanced_pbmc_B_cell_5_perc:
+    batch_key: batch
+    label_key: celltype
+    organism: human
+    assay: expression
+    file: data/datasets/imbalanced_pbmc_B_cell_0.05.h5ad
+  imbalanced_pbmc_B_cell_10_perc:
+    batch_key: batch
+    label_key: celltype
+    organism: human
+    assay: expression
+    file: data/datasets/imbalanced_pbmc_B_cell_0.1.h5ad
+  imbalanced_pbmc_Monocyte_CD14_0_perc:
+    batch_key: batch
+    label_key: celltype
+    organism: human
+    assay: expression
+    file: data/datasets/imbalanced_pbmc_Monocyte_CD14_0.h5ad
+  imbalanced_pbmc_Monocyte_CD14_5_perc:
+    batch_key: batch
+    label_key: celltype
+    organism: human
+    assay: expression
+    file: data/datasets/imbalanced_pbmc_Monocyte_CD14_0.05.h5ad
+  imbalanced_pbmc_Monocyte_CD14_10_perc:
+    batch_key: batch
+    label_key: celltype
+    organism: human
+    assay: expression
+    file: data/datasets/imbalanced_pbmc_Monocyte_CD14_0.1.h5ad
+  imbalanced_pbmc_Monocyte_FCGR3A_0_perc:
+    batch_key: batch
+    label_key: celltype
+    organism: human
+    assay: expression
+    file: data/datasets/imbalanced_pbmc_Monocyte_FCGR3A_0.h5ad
+  imbalanced_pbmc_Monocyte_FCGR3A_5_perc:
+    batch_key: batch
+    label_key: celltype
+    organism: human
+    assay: expression
+    file: data/datasets/imbalanced_pbmc_Monocyte_FCGR3A_0.05.h5ad
+  imbalanced_pbmc_Monocyte_FCGR3A_10_perc:
+    batch_key: batch
+    label_key: celltype
+    organism: human
+    assay: expression
+    file: data/datasets/imbalanced_pbmc_Monocyte_FCGR3A_0.1.h5ad
+
