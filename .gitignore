@@ -23,7 +23,7 @@ rsessions
 data/create_imbalanced_atlas.R
 benchmark_imbalance
 benchmark_imbalance_atlas
-configs/benchmark_imbalance.yaml
+!configs/benchmark_imbalance.yaml
 configs/benchmark_imbalance_atlas.yaml
 scripts/benchmark_imbalance.py
 benchmark_imbalance_28072025
