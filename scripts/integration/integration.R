@@ -226,7 +226,7 @@ runFastMNN = function(sobj, batch) {
   return(sobj)
 }
 
-runCoralysis = function(sobj, batch, scaling, threads = 4) {
+runCoralysis = function(sobj, batch, scaling, seed = 1024, threads = 4) {
   suppressPackageStartupMessages({
     require(SingleCellExperiment)
     require(Coralysis)
@@ -252,7 +252,7 @@ runCoralysis = function(sobj, batch, scaling, threads = 4) {
   sce <- SingleCellExperiment(assays = list("logcounts" = as(as.matrix(expr), "sparseMatrix")), 
 			      colData = DataFrame(meta.data))
   # Run Coralysis integration
-  set.seed(1024)
+  set.seed(seed)
   sce <- RunParallelDivisiveICP(object = sce, batch.label = batch, scale.by = scaling, threads = threads)
   sce <- RunPCA(object = sce, assay.name = "joint.probability", dimred.name = "PCA")
 

@@ -97,7 +97,18 @@ if(opt$method=='coralysis'){
 		sobj <- subset(sobj, features=hvg)
 	}
 
-	out=runCoralysis(sobj, opt$b, opt$s)
+	out <- tryCatch(expr = runCoralysis(sobj = sobj, 
+					    batch = opt$b, 
+					    scaling = opt$s, 
+					    seed = 1024),
+			error=function(e) {
+				gc()
+				message("\n\nWARNING: Coralysis failed to converge with seed 1024.\nRe-running Coralysis with seed 1240...\n")
+				runCoralysis(sobj = sobj, 
+					     batch = opt$b, 
+					     scaling = opt$s, 
+					     seed = 1240)
+			 })
 }
 
 saveSeuratObject(out, opt$o)
